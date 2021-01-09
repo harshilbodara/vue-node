@@ -1,0 +1,182 @@
+<template>
+  <div>
+    <button
+      type="button"
+      class="btn btn-success"
+      data-toggle="modal"
+      data-target="#exampleModalCenter"
+    >
+      Add user
+    </button>
+
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="exampleModalCenter"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalCenterTitle"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Add User</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="container">
+            <form @submit.prevent="onSubmit()" method="post" enctype="multipart/form-data">  
+              <div class="form-group">
+                <label for="exampleInputEmail1">First name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Enter firstname"
+                  v-model="firstname"
+                />
+              </div>
+              <div class="form-group">
+                <label for="exampleInputEmail1">Last name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Enter lastname"
+                  v-model="lastname"
+                />
+              </div>
+              <div class="form-group">
+                <label for="exampleInputEmail1">Email</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  placeholder="Enter email"
+                  v-model="email"
+                />
+              </div>
+              <div class="form-group">
+                <label for="exampleInputEmail1">User name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Enter username"
+                  v-model="username"
+                />
+              </div>
+              <div class="form-group">
+                <label for="exampleInputEmail1">Profile</label>
+                              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Upload</span>
+                </div>
+                <div class="custom-file">
+                  <input
+                    type="file"
+                    class="custom-file-input"
+                    @change="profileselected"
+                  />
+                  <label class="custom-file-label" for="inputGroupFile01"
+                    >Choose file</label
+                  >
+                </div>
+              </div>
+              </div>
+              <div class="form-group">
+                <label for="exampleInputPassword1">Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  placeholder="Password"
+                  v-model="password"
+                />
+              </div>
+                        <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+              <button type="submit" class="btn btn-primary">Add</button>
+          </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { mapActions } from "vuex";
+import Axios from 'axios';
+export default {
+  name: "AddComponent",
+  data()
+    {
+        return {
+            firstname:"",
+            lastname:"",
+            email:"",
+            username:"",
+            password:"",
+            profile:"",
+            profileview:"",
+        }
+    },
+    methods:{
+        ...mapActions(["addUsers"]),
+          profileselected(e)
+        {
+          this.profile = e.target.files[0];
+          let reader = new FileReader();
+          reader.readAsDataURL(this.profile);
+          reader.onload = e => {
+            this.profileview = e.target.result
+          }
+        },
+        async onSubmit()
+        {
+            const formData = new FormData();
+            formData.append("firstname",this.firstname);
+            formData.append("lastname",this.lastname);
+            formData.append("email",this.email);
+            formData.append("username",this.username);
+            formData.append("profile",this.profile);
+            formData.append("password",this.password);
+
+
+            hello
+            // const formData = {
+            //   "firstname":this.firstname,
+            //   "lastname":this.lastname,
+            //   "email":this.email,
+            //   "username":this.username,
+            //   "profile":this.profile,
+            //   "password":this.password
+            // }
+            await Axios.post(`${process.env.VUE_APP_NODE_API}/adduser`,formData)
+            .then(()=>{
+              console.log("success")
+            })
+            //         await  this.addUsers({
+            //     firstname:this.firstname,
+            //     lastname:this.lastname,
+            //     email:this.email,
+            //     username:this.username,
+            //     profile:this.profile,
+            //     password:this.password,
+            // })
+        }
+    }    
+};
+</script>
+
+<style scoped></style>
